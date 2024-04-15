@@ -1,5 +1,6 @@
 <?php
 
+  echo "Testing on nodejs ....";
   // perform HTTP request to your nodejs server to fetch your data
   $raw_data = file_get_contents('http://localhost:3031/scrape');
 

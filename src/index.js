@@ -38,6 +38,6 @@ app.use('/scrape', routes.scrape);
 
 // * Start * //
 
-app.listen(process.env.PORT, () =>
-  console.log(`Example app listening on port ${process.env.PORT}!`),
+app.listen(process.env.PORT || 3031, () =>
+  console.log(`Example app listening on port ${process.env.PORT || 3031}!`),
 );
