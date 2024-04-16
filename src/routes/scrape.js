@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
     const ipAddress = await page.$eval('pre', el => el.innerText);
 
     const data = { ip: ipAddress };
-    fs.writeFileSync('0.json', JSON.stringify(data, null, 2));
+    //fs.writeFileSync('0.json', JSON.stringify(data, null, 2));
 
     console.log('IP:', ipAddress);
     return res.send({ result: ipAddress});
