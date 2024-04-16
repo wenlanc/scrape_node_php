@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
   });
 
   const page = await browser.newPage();
-
+  let result = "";
   try {
 
     await page.setViewport({ width: 1400, height: 600 });
@@ -33,14 +33,19 @@ router.get('/', async (req, res) => {
     //fs.writeFileSync('0.json', JSON.stringify(data, null, 2));
 
     console.log('IP:', ipAddress);
-    return res.send({ result: ipAddress});
+
+    await browser.close();
+
+    result = ipAddress;
 
   } catch (e) {
     console.log(e);
+    result = "Error";
   } finally {
     await browser.close();
-    return res.send({ result: "Error"});
   }
+
+  return res.send({ result });
 
 });
 
