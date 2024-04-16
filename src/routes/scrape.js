@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   const browser = await puppeteer.launch({
     executablePath: '/usr/bin/google-chrome',
     userDataDir: '/var/www/html/tmp',
-    headless: true,
+    headless: false,
     args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
