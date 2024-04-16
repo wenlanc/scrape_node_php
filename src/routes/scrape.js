@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
 
   const browser = await puppeteer.launch({
     executablePath: '/usr/bin/google-chrome',
-    userDataDir: '/var/www/html/tmp',
+    //userDataDir: '/var/www/html/tmp',
     headless: true,
     args: [
     '--no-sandbox',
