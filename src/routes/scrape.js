@@ -5,41 +5,42 @@ const fs = require('fs');
 
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
 
   const url = "https://api.ipify.org";
-  (async () => {
-    const browser = await puppeteer.launch({
-      headless: true,
-      executablePath: '/usr/bin/google-chrome',
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-      ],
-    });
 
-    const page = await browser.newPage();
+  const browser = await puppeteer.launch({
+    headless: true,
+    executablePath: '/usr/bin/google-chrome',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+    ],
+  });
 
-    try {
+  const page = await browser.newPage();
 
-      await page.setViewport({ width: 1400, height: 600 });
-      await page.goto(url, { waitUntil: 'networkidle2' });
+  try {
 
-      await page.waitForSelector('pre');
+    await page.setViewport({ width: 1400, height: 600 });
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
-      const ipAddress = await page.$eval('pre', el => el.innerText);
+    await page.waitForSelector('pre');
 
-      const data = { ip: ipAddress };
-      fs.writeFileSync('0.json', JSON.stringify(data, null, 2));
+    const ipAddress = await page.$eval('pre', el => el.innerText);
 
-      console.log('IP:', ipAddress);
-      return res.send({ result: ipAddress});
+    const data = { ip: ipAddress };
+    fs.writeFileSync('0.json', JSON.stringify(data, null, 2));
 
-    } finally {
-      await browser.close();
-      return res.send({ result: "Error"});
-    }
-  })();
+    console.log('IP:', ipAddress);
+    return res.send({ result: ipAddress});
+
+  } catch (e) {
+    console.log(e);
+  } finally {
+    await browser.close();
+    return res.send({ result: "Error"});
+  }
 
 });
 
