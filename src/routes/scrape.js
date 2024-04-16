@@ -41,6 +41,9 @@ router.get('/', async (req, res) => {
     const pageContent = await page.content();
     const videoUrlRegex = /"format":"mp4","videoUrl":"(.*?)"/;
     const match = pageContent.match(videoUrlRegex);
+
+    console.log(match);
+
     if (match && match[1]) {
       const videoUrl = match[1].replace(/\\/g, '');
       await page.goto('https://www.redtube.com' + videoUrl);
