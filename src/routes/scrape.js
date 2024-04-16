@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
   try {
 
     //await page.setViewport({ width: 1400, height: 600 });
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    await page.goto(url);
 
     await page.waitForSelector('body');  // 
 
