@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
     await page.setUserAgent(ua);
     
     //await page.setViewport({ width: 1400, height: 600 });
-    await page.goto(url, { waitUntil: ['networkidle2', "domcontentloaded"] });
+    await page.goto(url, { waitUntil: ["domcontentloaded"] });
 
     await page.waitForSelector('body', { timeout: 30000 });  // 
 
