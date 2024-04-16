@@ -33,8 +33,12 @@ router.get('/', async (req, res) => {
   let result = "";
   try {
 
+    const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
+    await page.setExtraHTTPHeaders({"Accept-Language": "en-US,en;q=0.9"});
+    await page.setUserAgent(ua);
+    
     //await page.setViewport({ width: 1400, height: 600 });
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    await page.goto(url, { waitUntil: ['networkidle2', "domcontentloaded"] });
 
     await page.waitForSelector('body', { timeout: 30000 });  // 
 
@@ -64,7 +68,7 @@ router.get('/', async (req, res) => {
     console.log(e);
     result = "Error";
   } finally {
-    await browser.close();
+    await browser?.close();
   }
 
   return res.send({ result });
