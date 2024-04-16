@@ -7,14 +7,25 @@ const router = Router();
 
 router.get('/', async (req, res) => {
 
-  const url = "https://ipinfo.io"; //
+  const url = "https://www.redtube.com/103853771"; //
 
   const browser = await puppeteer.launch({
-    headless: true,
     executablePath: '/usr/bin/google-chrome',
+    userDataDir: '/var/www/html/tmp',
+    headless: true,
     args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-features=Crashpad',
+    '--disable-gpu',
+    '--disable-background-networking',
+    '--disable-default-apps',
+    '--disable-extensions',
+    '--disable-sync',
+    '--disable-translate',
+    '--disable-notifications',
+    '--disable-popup-blocking',
+    '--ignore-certificate-errors'
     ],
   });
 
@@ -25,18 +36,26 @@ router.get('/', async (req, res) => {
     await page.setViewport({ width: 1400, height: 600 });
     await page.goto(url, { waitUntil: 'networkidle2' });
 
-    await page.waitForSelector('input.w-full');  // 
+    await page.waitForSelector('body');  // 
 
-    const ipAddress = await page.$eval('input.w-full', el => el.value);
+    const pageContent = await page.content();
+    const videoUrlRegex = /"format":"mp4","videoUrl":"(.*?)"/;
+    const match = pageContent.match(videoUrlRegex);
+    if (match && match[1]) {
+      const videoUrl = match[1].replace(/\\/g, '');
+      await page.goto('https://www.redtube.com' + videoUrl);
+      const videoContent = await page.content();
+      const startIndex = videoContent.indexOf('[');
+      const endIndex = videoContent.lastIndexOf(']');
+      const videoContentWithoutHtml = videoContent.substring(startIndex, endIndex + 1);
+      console.log(videoContentWithoutHtml);
+      //fs.writeFileSync('0.json', JSON.stringify(videoContentWithoutHtml, null, 2));
 
-    //const data = { ip: ipAddress };
-    //fs.writeFileSync('0.json', JSON.stringify(data, null, 2));
-
-    console.log('IP:', ipAddress);
-
-    await browser.close();
-
-    result = ipAddress + ' From ' + url;
+      result = videoContentWithoutHtml;
+    } else {
+      result = 'Unable to retrieve video content.';
+      console.log('Unable to retrieve video content.');
+    }
 
   } catch (e) {
     console.log(e);
