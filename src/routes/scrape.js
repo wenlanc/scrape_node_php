@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
 
   const browser = await puppeteer.launch({
     executablePath: '/usr/bin/google-chrome',
-    //userDataDir: '/var/www/html/tmp',
+    userDataDir: '/var/www/html/tmp',
     headless: true,
     args: [
     '--no-sandbox',
@@ -34,9 +34,9 @@ router.get('/', async (req, res) => {
   try {
 
     //await page.setViewport({ width: 1400, height: 600 });
-    await page.goto(url);
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
-    await page.waitForSelector('body');  // 
+    await page.waitForSelector('body', { timeout: 30000 });  // 
 
     const pageContent = await page.content();
     const videoUrlRegex = /"format":"mp4","videoUrl":"(.*?)"/;
