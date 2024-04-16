@@ -7,7 +7,7 @@ const router = Router();
 
 router.get('/', async (req, res) => {
 
-  const url = "https://api.ipify.org";
+  const url = "https://ipinfo.io"; //
 
   const browser = await puppeteer.launch({
     headless: true,
@@ -25,11 +25,11 @@ router.get('/', async (req, res) => {
     await page.setViewport({ width: 1400, height: 600 });
     await page.goto(url, { waitUntil: 'networkidle2' });
 
-    await page.waitForSelector('pre');
+    await page.waitForSelector('input.w-full');  // 
 
-    const ipAddress = await page.$eval('pre', el => el.innerText);
+    const ipAddress = await page.$eval('input.w-full', el => el.value);
 
-    const data = { ip: ipAddress };
+    //const data = { ip: ipAddress };
     //fs.writeFileSync('0.json', JSON.stringify(data, null, 2));
 
     console.log('IP:', ipAddress);
