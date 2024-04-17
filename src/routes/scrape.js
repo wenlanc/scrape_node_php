@@ -13,6 +13,7 @@ router.get('/', async (req, res) => {
     executablePath: '/usr/bin/google-chrome',
     userDataDir: '/var/www/html/tmp',
     headless: false,
+    ignoreHTTPSErrors: true,
     defaultViewport: null,
     args: [
     '--no-sandbox',
