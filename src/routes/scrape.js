@@ -27,11 +27,21 @@ router.get('/', async (req, res) => {
     '--disable-translate',
     '--disable-notifications',
     '--disable-popup-blocking',
-    '--ignore-certificate-errors'
+    '--ignore-certificate-errors',
+    '--proxy-server=socks5://proxyhost:8000'
     ],
   });
 
   const page = await browser.newPage();
+
+  const username = 'johndoe';
+  const password = 'qwerty1';
+
+  await page.authenticate({
+    username,
+    password,
+  });
+
   let result = "";
   try {
 
