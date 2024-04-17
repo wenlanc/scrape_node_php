@@ -21,6 +21,7 @@
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "puppeteer": "^22.6.4",
+    "socks-proxy-agent": "^8.0.3",
     "uuid": "^8.3.2"
   }
 }

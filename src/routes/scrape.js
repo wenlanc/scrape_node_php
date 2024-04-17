@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const { SocksProxyAgent } = require('socks-proxy-agent');
 
 const router = Router();
 
@@ -11,10 +12,7 @@ router.get('/', async (req, res) => {
 
   const browser = await puppeteer.launch({
     executablePath: '/usr/bin/google-chrome',
-    userDataDir: '/var/www/html/tmp',
     headless: true,
-    ignoreHTTPSErrors: true,
-    defaultViewport: null,
     args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
@@ -28,7 +26,9 @@ router.get('/', async (req, res) => {
     '--disable-notifications',
     '--disable-popup-blocking',
     '--ignore-certificate-errors',
-    '--proxy-server=socks5://proxyhost:8000'
+    '--start-fullscreen',
+    '--disable-session-crashed-bubble',
+    '--disable-infobars',
     ],
   });
 
@@ -45,14 +45,14 @@ router.get('/', async (req, res) => {
   let result = "";
   try {
 
-    const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
-    await page.setExtraHTTPHeaders({"Accept-Language": "en-US,en;q=0.9"});
-    await page.setUserAgent(ua);
-    
-    //await page.setViewport({ width: 1400, height: 600 });
-    await page.goto(url, { waitUntil: ["domcontentloaded"] });
+    const socksServers = 'socks5:// user : pass @ IP : port'; // Specificați serverul SOCKS5
 
-    await page.waitForSelector('body', { timeout: 30000 });  // 
+    const targetUrl = 'https://www.redtube.com/21927031'; // URL-ul paginii cu ID-ul specificat
+
+    const agent = new SocksProxyAgent(socksServers); // Crearea agentului SOCKS5
+
+    await page.goto(targetUrl, { agent }); // Navigarea către pagina folosind agentul SOCKS5
+    await page.waitForSelector('body');
 
     const pageContent = await page.content();
     const videoUrlRegex = /"format":"mp4","videoUrl":"(.*?)"/;
@@ -62,18 +62,20 @@ router.get('/', async (req, res) => {
 
     if (match && match[1]) {
       const videoUrl = match[1].replace(/\\/g, '');
-      await page.goto('https://www.redtube.com' + videoUrl);
+      await page.goto('https://www.redtube.com' + videoUrl, { agent }); // Navigarea către URL-ul videoclipului folosind agentul SOCKS5
+
       const videoContent = await page.content();
       const startIndex = videoContent.indexOf('[');
       const endIndex = videoContent.lastIndexOf(']');
       const videoContentWithoutHtml = videoContent.substring(startIndex, endIndex + 1);
+
       console.log(videoContentWithoutHtml);
       //fs.writeFileSync('0.json', JSON.stringify(videoContentWithoutHtml, null, 2));
 
       result = videoContentWithoutHtml;
     } else {
-      result = 'Unable to retrieve video content.';
-      console.log('Unable to retrieve video content.');
+      result = 'Unable to retrieve video content  for ID: 21927031.';
+      console.log('Unable to retrieve video content  for ID: 21927031.');
     }
 
   } catch (e) {
